@@ -1,0 +1,7 @@
+#ignoro archivos de texto
+*.txt
+#ignoro archivos numpy
+*.npz
+#ignoro archivos netcdf
+*.nc
+*.nc4

@@ -1,0 +1,5 @@
+python s2s_predictable_modes_analysis_w1.py
+python s2s_predictable_modes_analysis_w2.py
+python s2s_predictable_modes_analysis_w3.py
+python s2s_predictable_modes_analysis_w4.py
+
