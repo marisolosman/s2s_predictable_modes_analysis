@@ -5,3 +5,5 @@
 #ignoro archivos netcdf
 *.nc
 *.nc4
+#ignoro comprimidos
+*.gz
