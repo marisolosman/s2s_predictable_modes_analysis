@@ -47,9 +47,9 @@ for i in np.arange(1,5):
         CS1 = mapproj.contourf(lonproj, latproj, np.reshape(obs_evec[:, j], [NY, NX]), 
                                clevs, cmap=barra, vmin=-40,
                                vmax=40)
-        plt.title("Mode " + str(j + 1), fontsize=12)
+        plt.title("Mode " + str(j + 1), fontsize=20)
     #titulo general
-    plt.suptitle('Observed Empirical Orthogonal Functions Week '+ str(i), fontsize=14, x=0.52,
+    plt.suptitle('Observed Empirical Orthogonal Functions Week '+ str(i), fontsize=22, x=0.52,
                  y=0.95)
     cbar_ax = fig.add_axes([0.29, 0.05, 0.45, 0.05])
     fig.colorbar(CS1, cax=cbar_ax, orientation='horizontal')
@@ -65,42 +65,42 @@ for i in np.arange(1,5):
     ax = plt.subplot(3,1,1)
     #lagged correlation btw PC1 and PC2
     ax.xcorr(obs_pc[0,:], obs_pc[1, :] , normed=True, usevlines=True, maxlags=10, linewidth=3)
-    ax.axhline(y=0,xmin=0,linestyle='--',linewidth=1.2, color='b', alpha=0.6)
+    ax.axhline(y=0,xmin=0,linestyle='--', linewidth=1.2, color='b', alpha=0.6)
     ax.plot(lags, signif, linestyle='--', linewidth=1.2, color='b', alpha=0.6)
     ax.plot(lags, -signif, linestyle='--', linewidth=1.2, color='b', alpha=0.6)
     # tidy up the figure
-    ax.set_xlim((0,11))
-    ax.set_ylim((-0.5,0.5))
-    plt.title('Lagged correlation btw PC1 and PC2',fontsize=10)
+    ax.set_xlim((0, 11))
+    ax.set_ylim((-0.5, 0.5))
+    plt.title('Lagged correlation btw PC1 and PC2', fontsize=20)
     #lagged correlation btw PC1 and PC3
-    ax = plt.subplot(3,1,2)
+    ax = plt.subplot(3, 1, 2)
     ax.xcorr(obs_pc[0,:], obs_pc[2, :] , normed=True, usevlines=True, maxlags=10, linewidth=3)
-    ax.axhline(y=0,xmin=0,linestyle='--',linewidth=1.2, color='b', alpha=0.6)
+    ax.axhline(y=0, xmin=0, linestyle='--',linewidth=1.2, color='b', alpha=0.6)
     ax.plot(lags, signif, linestyle='--', linewidth=1.2, color='b', alpha=0.6)
     ax.plot(lags, -signif, linestyle='--', linewidth=1.2, color='b', alpha=0.6)
     # tidy up the figure
-    ax.set_xlim((0,11))
-    ax.set_ylim((-0.5,0.5))
+    ax.set_xlim((0, 11))
+    ax.set_ylim((-0.5, 0.5))
     plt.title('Lagged correlation btw PC1 and PC3',fontsize=10)
     #lagged correlation btw PC1 and PC4
-    ax = plt.subplot(3,1,3)
+    ax = plt.subplot(3, 1, 3)
     ax.xcorr(obs_pc[0,:], obs_pc[3, :] , normed=True, usevlines=True, maxlags=10, linewidth=3)
     ax.axhline(y=0,xmin=0, linestyle='--', linewidth=1.2, color='b', alpha=0.6)
     ax.plot(lags, signif, linestyle='--', linewidth=1.2, color='b', alpha=0.6)
     ax.plot(lags, -signif, linestyle='--', linewidth=1.2, color='b', alpha=0.6)
     # tidy up the figure
-    ax.set_xlim((0,11))
-    ax.set_ylim((-0.5,0.5))
+    ax.set_xlim((0, 11))
+    ax.set_ylim((-0.5, 0.5))
     plt.title('Lagged correlation btw PC1 and PC4',fontsize=10)
     fig.savefig(RUTA_OUT + 'PC1_laggedcorrelation_week' + str(i) + '.png',
                 dpi=300, bbox_inches='tight', papertype='A4', orientation='landscape')
 
     #calculo la correlacion laggeada entre las Pcs 2-4
-    fig = plt.figure(figsize = (10,17),dpi = 300)  #fig size in inches
-    ax = plt.subplot(3,1,1)
+    fig = plt.figure(figsize=(10, 17), dpi=300)  #fig size in inches
+    ax = plt.subplot(3, 1, 1)
     #lagged correlation btw PC2 and PC3
-    ax.xcorr(obs_pc[1,:], obs_pc[2, :] , normed=True, usevlines=True, maxlags=10, linewidth=3)
-    ax.axhline(y=0,xmin=0,linestyle='--',linewidth=1.2, color='b', alpha=0.6)
+    ax.xcorr(obs_pc[1,:], obs_pc[2, :], normed=True, usevlines=True, maxlags=10, linewidth=3)
+    ax.axhline(y=0, xmin=0,linestyle='--', linewidth=1.2, color='b', alpha=0.6)
     ax.plot(lags, signif, linestyle='--', linewidth=1.2, color='b', alpha=0.6)
     ax.plot(lags, -signif, linestyle='--', linewidth=1.2, color='b', alpha=0.6)
     # tidy up the figure
@@ -126,7 +126,7 @@ for i in np.arange(1,5):
     # tidy up the figure
     ax.set_xlim((0, 11))
     ax.set_ylim((-0.5, 0.5))
-    plt.title('Lagged correlation btw PC3 and PC4', fontsize=10)
+    plt.title('Lagged correlation btw PC3 and PC4', fontsize=20)
     fig.savefig(RUTA_OUT + 'PC2_laggedcorrelation_week' + str (i) +
                 '.png', dpi=300, bbox_inches='tight', papertype='A4', orientation='landscape')
 
