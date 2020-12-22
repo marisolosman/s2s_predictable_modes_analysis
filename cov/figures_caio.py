@@ -14,7 +14,8 @@ import matplotlib.cm as cm
 import mpl_toolkits.basemap as bm
 from scipy import stats
 covariance = True
-WEEK = ['w1', 'w2', 'w3', 'w4']
+WEEK = ['w1', 'w2', 'w3']
+WEEK = ['w4']
 RUTA = './outputs/'
 RUTA_OUT = './figures_caio/'
 NWEEKS = 242
@@ -146,144 +147,152 @@ models = ['cma', 'eccc', 'ecmwf', 'ncep', 'mmem']
 ### ### Potential predictability
 ##
 ### In[13]:
-clevs = np.linspace(-1, 1, 21)
-barra = plt.cm.bwr #colorbar
-for i in [1]:
-    f = np.load('./outputs/skill_predic_' + WEEK[i] + '.npz')
-    R_forec_predic_modes = f['arr_0']
-    R_forec_residual_modes = f['arr_1']
-    R_forec_anom = f['arr_2']
-    R_obs_predic_modes = f['arr_3']
-    print('obs', np.mean(np.reshape(R_obs_predic_modes, NX*NY)))
-    #f['R_obs_predic_modes1']
-    dx = f['arr_4']
-    dy = f['arr_5']
-    fig = plt.figure(figsize=(30, 28), dpi=300)
-    plt.subplot(4, 5, 3)
-    mapproj = bm.Basemap(projection='cyl',llcrnrlon = 270, llcrnrlat = -60,
-                         urcrnrlon = 270+(NX-1)*1.5, urcrnrlat = -60+(NY-1)*1.5,
-                         resolution = 'i')
-    mapproj.drawcoastlines()
-    lonproj, latproj = mapproj(dx, dy)      #poject grid
-    CS1 = mapproj.contourf(lonproj, latproj, R_obs_predic_modes[:, :], clevs,
-                           cmap=barra,vmin=-1,vmax=1) #extended generate pretty colorbar
-    plt.title('Observed predict. modes', fontsize=22)
-    for k in range(5):
-        print(models[k], 'Anom', np.mean(np.reshape(R_forec_anom[k, :, :], NX*NY)))
-        print(models[k], ' PM ', np.mean(np.reshape(R_forec_predic_modes[k, :, :], NX*NY)))
-        print(models[k], ' Res ', np.mean(np.reshape(R_forec_residual_modes[k, :, :], NX*NY)))
-        plt.subplot(4, 5,k + 6)
-        mapproj = bm.Basemap(projection='cyl',llcrnrlon = 270, llcrnrlat = -60,
-                             urcrnrlon = 270+(NX-1)*1.5, urcrnrlat = -60+(NY-1)*1.5,
-                             resolution = 'i')
-        mapproj.drawcoastlines()
-        lonproj, latproj = mapproj(dx, dy)      #poject grid
-        CS1 = mapproj.contourf(lonproj, latproj, R_forec_anom[k, :, :], clevs,
-                               cmap=barra,vmin=-1,vmax=1) #extended generate pretty colorbar
-        plt.title('Forecasted anom. - ' + models[k].upper(), fontsize=22)
-        plt.subplot(4, 5, k + 11)
-        mapproj = bm.Basemap(projection='cyl', llcrnrlon=270, llcrnrlat=-60,
-                             urcrnrlon=270 + (NX - 1) * 1.5, urcrnrlat=-60 + (NY - 1) * 1.5,
-                             resolution='i')
-        mapproj.drawcoastlines()
-        lonproj, latproj = mapproj(dx, dy)      #poject grid
-        CS1 = mapproj.contourf(lonproj, latproj, R_forec_predic_modes[k, :, :], clevs,
-                               cmap=barra, vmin=-1, vmax=1) #extended generate pretty colorbar
-        plt.title('Forec. predict. modes - ' + models[k].upper(), fontsize=22)
-        plt.subplot(4, 5, k + 16)
-        mapproj = bm.Basemap(projection='cyl', llcrnrlon=270, llcrnrlat=-60,
-                             urcrnrlon=270 + (NX - 1) * 1.5, urcrnrlat=-60 + (NY - 1) * 1.5,
-                             resolution='i')
-        mapproj.drawcoastlines()
-        lonproj, latproj = mapproj(dx, dy)      #poject grid
-        CS1 = mapproj.contourf(lonproj, latproj, R_forec_residual_modes[k, :, :], clevs,
-                               cmap=barra, vmin=-1, vmax=1) #extended generate pretty colorbar
-        plt.title('Forec. resid. modes - ' + models[k].upper(), fontsize=22)
-    plt.suptitle('Correlation between Observations vs: ', fontsize=26, x=0.52, y=0.93)
-    plt.subplots_adjust(right=0.9, top=0.90)#, wspace=None, hspace=None)
-    cbar_ax = fig.add_axes([0.92, 0.33, 0.03, 0.35])
-    cax=fig.colorbar(CS1, cax=cbar_ax, orientation='vertical')
-    ticklabs = cax.ax.get_yticklabels()
-    cax.ax.set_yticklabels(ticklabs, fontsize=20)
-    plt.savefig(RUTA_OUT + 'skill_week' + str(i + 1) + '.png', dpi=300,
-                bbox_inches='tight', orientation='portrait', papertype='A4') 
-clevs = np.linspace(-2, 2, 11)
-barra = plt.cm.bwr #colorbar
-for i in [1]:
-    f = np.load('./outputs/skill_predic_' + WEEK[i] + '.npz')
-    R_forec_predic_modes = f['arr_0']
-    R_forec_anom = f['arr_2']
-    dx = f['arr_4']
-    dy = f['arr_5']
-    fig = plt.figure(figsize=(30, 9), dpi=300)
-    for k in range(5):
-        plt.subplot(1, 5, k + 1)
-        mapproj = bm.Basemap(projection='cyl',llcrnrlon = 270, llcrnrlat = -60,
-                             urcrnrlon = 270+(NX-1)*1.5, urcrnrlat = -60+(NY-1)*1.5,
-                             resolution = 'i')
-        mapproj.drawcoastlines()
-        lonproj, latproj = mapproj(dx, dy)      #poject grid
-        CS1 = mapproj.contourf(lonproj, latproj, R_forec_predic_modes[k, :, :] /
-                               R_forec_anom[k, :, :], clevs,
-                               cmap=barra,vmin=-2,vmax=2, extend='both') #extended generate pretty colorbar
-        plt.title('Skill vs Predic modes - ' + models[k].upper(), fontsize=22)
-    plt.suptitle('Correlation between Observations vs: ', fontsize=26, x=0.52, y=0.93)
-    plt.subplots_adjust(right=0.9, top=0.90)#, wspace=None, hspace=None)
-    cbar_ax = fig.add_axes([0.92, 0.33, 0.028, 0.30])
-    cax=fig.colorbar(CS1, cax=cbar_ax, orientation='vertical')
-    ticklabs = cax.ax.get_yticklabels()
-    cax.ax.set_yticklabels(ticklabs, fontsize=20)
-    plt.savefig(RUTA_OUT + 'ratio_skill_predic_week' + str(i + 1) + '.png', dpi=300,
-                bbox_inches='tight', orientation='portrait', papertype='A4') 
-for i in [1]:
-    f = np.load('./outputs/skill_predic_' + WEEK[i] + '.npz')
-    R_forec_predic_modes = f['arr_0']
-    R_forec_residual_modes = f['arr_1']
-    R_forec_anom = f['arr_2']
-    R_obs_predic_modes = f['arr_3']
-    #    #f['R_obs_predic_modes1']
-    dx = f['arr_4']
-    dy = f['arr_5']
-    mapproj = bm.Basemap(projection='cyl',llcrnrlon = 270, llcrnrlat = -60,
-                         urcrnrlon = 270+(NX-1)*1.5, urcrnrlat = -60+(NY-1)*1.5,
-                         resolution = 'i')
-    lonproj, latproj = mapproj(dx, dy)      #poject grid
-    Array = np.zeros_like(dx, dtype=bool)
-    for j in range(dx.shape[0]):
-        for k in range(dx.shape[1]):
-            if mapproj.is_land(dx[j, k],dy[j, k]):
-                Array[j, k] = False
-            else:
-                Array[j, k] = True
-    aux = ma.masked_array(R_obs_predic_modes, mask=Array)
-    print('obs', np.reshape(aux, NX*NY).mean())
-    for k in range(5):
-        aux = ma.masked_array(R_forec_anom[k,:,:], mask=Array)
-        print(models[k], 'Anom', np.reshape(aux, NX*NY).mean())
-        aux = ma.masked_array(R_forec_predic_modes[k,:,:], mask=Array)
-        print(models[k], ' PM ', np.reshape(aux, NX*NY).mean())
-        aux = ma.masked_array(R_forec_residual_modes[k, :, :], mask=Array)
-        print(models[k], ' Res ', np.reshape(aux, NX*NY).mean())
-
-#fig = plt.figure(figsize=(30, 28), dpi=300)
-#colores = ['r', 'b', 'g', 'y', 'k']
-#for i in range(4):
-#    f = np.load('./outputs/pss_exp_var_' + WEEK[i] + '.npz')
-#    pss = f['arr_2']
-#    obs_var = f['arr_1']
-##    print(obs_var*100)
-#    plt.subplot(2, 2, i + 1)
-#    for k in range(5):
-##        print(models[k], pss[k, 3])
+#clevs = np.linspace(-1, 1, 21)
+#barra = plt.cm.bwr #colorbar
+#for i in [0]:
+#    f = np.load('./outputs/skill_predic_' + WEEK[i] + '_bis.npz')
+#    R_forec_predic_modes = f['arr_0']
+#    R_forec_residual_modes = f['arr_1']
+#    R_forec_anom = f['arr_2']
+#    R_obs_predic_modes = f['arr_3']
+#    print(np.min(R_forec_predic_modes))
+#    print(np.max(R_forec_predic_modes))
+#    print(R_forec_predic_modes)
 #
-#        CS = plt.scatter(np.sqrt(pss[k, :]), obs_var[0:7] * 100, color=colores[k], label=models[k].upper(), s=360)
-#    plt.xlabel('PSS', fontsize=24)
-#    plt.tick_params(axis='both', which='major', labelsize=18)
-#    plt.xlim([0, 1])
-#    plt.ylim([1,45])
-#    plt.ylabel('Observed explained variance', fontsize=24)
-#    plt.title('Week ' + str(i + 1), fontsize=28)
-#plt.subplots_adjust(right=0.9, top=0.90)
-#plt.legend(bbox_to_anchor=(1.05, 0), loc='lower left', borderaxespad=0., fontsize=24)
-#plt.savefig(RUTA_OUT + 'pss_obs_var.png', dpi=300,  bbox_inches='tight')
+#    print('obs', np.mean(np.reshape(R_obs_predic_modes, NX*NY)))
+#    #f['R_obs_predic_modes1']
+#    dx = f['arr_5']
+#    dy = f['arr_6']
+#    fig = plt.figure(figsize=(30, 28), dpi=300)
+#    plt.subplot(4, 5, 3)
+#    mapproj = bm.Basemap(projection='cyl',llcrnrlon = 270, llcrnrlat = -60,
+#                         urcrnrlon = 270+(NX-1)*1.5, urcrnrlat = -60+(NY-1)*1.5,
+#                         resolution = 'i')
+#    mapproj.drawcoastlines()
+#    lonproj, latproj = mapproj(dx, dy)      #poject grid
+#    CS1 = mapproj.contourf(lonproj, latproj, R_obs_predic_modes[:, :], clevs,
+#                           cmap=barra,vmin=-1,vmax=1) #extended generate pretty colorbar
+#    plt.title('Observed predict. modes', fontsize=22)
+#    for k in range(5):
+#        print(models[k], 'Anom', np.mean(np.reshape(R_forec_anom[k, :, :], NX*NY)))
+#        print(models[k], ' PM ', np.mean(np.reshape(R_forec_predic_modes[k, :, :], NX*NY)))
+#        print(models[k], ' Res ', np.mean(np.reshape(R_forec_residual_modes[k, :, :], NX*NY)))
+#        plt.subplot(4, 5,k + 6)
+#        mapproj = bm.Basemap(projection='cyl',llcrnrlon = 270, llcrnrlat = -60,
+#                             urcrnrlon = 270+(NX-1)*1.5, urcrnrlat = -60+(NY-1)*1.5,
+#                             resolution = 'i')
+#        mapproj.drawcoastlines()
+#        lonproj, latproj = mapproj(dx, dy)      #poject grid
+#        CS1 = mapproj.contourf(lonproj, latproj, R_forec_anom[k, :, :], clevs,
+#                               cmap=barra,vmin=-1,vmax=1) #extended generate pretty colorbar
+#        plt.title('Forecasted anom. - ' + models[k].upper(), fontsize=22)
+#        plt.subplot(4, 5, k + 11)
+#        mapproj = bm.Basemap(projection='cyl', llcrnrlon=270, llcrnrlat=-60,
+#                             urcrnrlon=270 + (NX - 1) * 1.5, urcrnrlat=-60 + (NY - 1) * 1.5,
+#                             resolution='i')
+#        mapproj.drawcoastlines()
+#        lonproj, latproj = mapproj(dx, dy)      #poject grid
+#        CS1 = mapproj.contourf(lonproj, latproj, R_forec_predic_modes[k, :, :], clevs,
+#                               cmap=barra, vmin=-1, vmax=1) #extended generate pretty colorbar
+#        plt.title('Forec. predict. modes - ' + models[k].upper(), fontsize=22)
+#        plt.subplot(4, 5, k + 16)
+#        mapproj = bm.Basemap(projection='cyl', llcrnrlon=270, llcrnrlat=-60,
+#                             urcrnrlon=270 + (NX - 1) * 1.5, urcrnrlat=-60 + (NY - 1) * 1.5,
+#                             resolution='i')
+#        mapproj.drawcoastlines()
+#        lonproj, latproj = mapproj(dx, dy)      #poject grid
+#        CS1 = mapproj.contourf(lonproj, latproj, R_forec_residual_modes[k, :, :], clevs,
+#                               cmap=barra, vmin=-1, vmax=1) #extended generate pretty colorbar
+#        plt.title('Forec. resid. modes - ' + models[k].upper(), fontsize=22)
+#    plt.suptitle('Correlation between Observations vs: ', fontsize=26, x=0.52, y=0.93)
+#    plt.subplots_adjust(right=0.9, top=0.90)#, wspace=None, hspace=None)
+#    cbar_ax = fig.add_axes([0.92, 0.33, 0.03, 0.35])
+#    cax=fig.colorbar(CS1, cax=cbar_ax, orientation='vertical')
+#    ticklabs = cax.ax.get_yticklabels()
+#    cax.ax.set_yticklabels(ticklabs, fontsize=20)
+#    plt.savefig(RUTA_OUT + 'skill_week' + str(i + 4) + '_bis.png', dpi=300,
+#                bbox_inches='tight', orientation='portrait') 
+#clevs = np.linspace(-2, 2, 11)
+#barra = plt.cm.bwr #colorbar
+#for i in [0]:
+#    f = np.load('./outputs/skill_predic_' + WEEK[i] + '_bis.npz')
+#    print(f.keys)
+#    R_forec_predic_modes = f['arr_0']
+#    print(np.min(R_forec_predic_modes))
+#    print(np.max(R_forec_predic_modes))
+#    print(R_forec_predic_modes)
+#    R_forec_anom = f['arr_2']
+#    dx = f['arr_4']
+#    dy = f['arr_5']
+#    fig = plt.figure(figsize=(30, 9), dpi=300)
+#    for k in range(5):
+#        plt.subplot(1, 5, k + 1)
+#        mapproj = bm.Basemap(projection='cyl',llcrnrlon = 270, llcrnrlat = -60,
+#                             urcrnrlon = 270+(NX-1)*1.5, urcrnrlat = -60+(NY-1)*1.5,
+#                             resolution = 'i')
+#        mapproj.drawcoastlines()
+#        lonproj, latproj = mapproj(dx, dy)      #poject grid
+#        CS1 = mapproj.contourf(lonproj, latproj, R_forec_predic_modes[k, :, :] /
+#                               R_forec_anom[k, :, :], clevs,
+#                               cmap=barra,vmin=-2,vmax=2, extend='both') #extended generate pretty colorbar
+#        plt.title('Skill vs Predic modes - ' + models[k].upper(), fontsize=22)
+#    plt.suptitle('Correlation between Observations vs: ', fontsize=26, x=0.52, y=0.93)
+#    plt.subplots_adjust(right=0.9, top=0.90)#, wspace=None, hspace=None)
+#    cbar_ax = fig.add_axes([0.92, 0.33, 0.028, 0.30])
+#    cax=fig.colorbar(CS1, cax=cbar_ax, orientation='vertical')
+#    ticklabs = cax.ax.get_yticklabels()
+#    cax.ax.set_yticklabels(ticklabs, fontsize=20)
+#    plt.savefig(RUTA_OUT + 'ratio_skill_predic_week' + str(i + 1) + '_bis.png', dpi=300,
+#                bbox_inches='tight', orientation='portrait', papertype='A4') 
+#for i in [0]:
+#    f = np.load('./outputs/skill_predic_' + WEEK[i] + '_bis.npz')
+#    R_forec_predic_modes = f['arr_0']
+#    R_forec_residual_modes = f['arr_1']
+#    R_forec_anom = f['arr_2']
+#    R_obs_predic_modes = f['arr_3']
+#    #    #f['R_obs_predic_modes1']
+#    dx = f['arr_4']
+#    dy = f['arr_5']
+#    mapproj = bm.Basemap(projection='cyl',llcrnrlon = 270, llcrnrlat = -60,
+#                         urcrnrlon = 270+(NX-1)*1.5, urcrnrlat = -60+(NY-1)*1.5,
+#                         resolution = 'i')
+#    lonproj, latproj = mapproj(dx, dy)      #poject grid
+#    Array = np.zeros_like(dx, dtype=bool)
+#    for j in range(dx.shape[0]):
+#        for k in range(dx.shape[1]):
+#            if mapproj.is_land(dx[j, k],dy[j, k]):
+#                Array[j, k] = False
+#            else:
+#                Array[j, k] = True
+#    aux = ma.masked_array(R_obs_predic_modes, mask=Array)
+#    print('obs', np.reshape(aux, NX*NY).mean())
+#    for k in range(5):
+#        aux = ma.masked_array(R_forec_anom[k,:,:], mask=Array)
+#        print(models[k], 'Anom', np.reshape(aux, NX*NY).mean())
+#        aux = ma.masked_array(R_forec_predic_modes[k,:,:], mask=Array)
+#        print(models[k], ' PM ', np.reshape(aux, NX*NY).mean())
+#        aux = ma.masked_array(R_forec_residual_modes[k, :, :], mask=Array)
+#        print(models[k], ' Res ', np.reshape(aux, NX*NY).mean())
+#
+fig = plt.figure(figsize=(30, 28), dpi=300)
+colores = ['r', 'b', 'g', 'y', 'k']
+for i in range(4):
+    f = np.load('./outputs/pss_exp_var_' + WEEK[i] + '.npz')
+    pss = f['arr_2']
+    obs_var = f['arr_1']
+#    print(obs_var*100)
+    plt.subplot(2, 2, i + 1)
+    for k in range(5):
+        print(models[k], pss[k, 0:])
+
+        CS = plt.scatter(pss[k, :], obs_var[0:7] * 100, color=colores[k], label=models[k].upper(), s=360)
+    plt.xlabel('PSS', fontsize=24)
+    plt.tick_params(axis='both', which='major', labelsize=18)
+    plt.xlim([0, 1])
+    plt.ylim([1,45])
+    plt.ylabel('Observed explained variance', fontsize=24)
+    plt.title('Week ' + str(i + 1), fontsize=28)
+plt.subplots_adjust(right=0.9, top=0.90)
+plt.legend(bbox_to_anchor=(1.05, 0), loc='lower left', borderaxespad=0., fontsize=24)
+#plt.savefig(RUTA_OUT + 'pss_obs_var_new.png', dpi=300,  bbox_inches='tight')
 ##
