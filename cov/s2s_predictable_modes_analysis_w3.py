@@ -163,6 +163,7 @@ for i in np.arange(len(models)):
         models_evec_sorted[i,j,:] = np.sign(pcc_aux[j, index]) * evec_aux[index, :]
         models_var_sorted[i, j] = eval_aux[index]
         pss_sorted[i, j] = pss_aux[j, index]
+        print(models[i], pss_aux[j, index], tcc_aux[j, index], pcc_aux[j, index])
         pss_aux = np.delete(pss_aux, index, 1)
         tcc_aux = np.delete(tcc_aux, index, 1)
         pcc_aux = np.delete(pcc_aux, index, 1)
@@ -240,8 +241,12 @@ significance_evec = np.empty([len(models), 4])
 for j in np.arange(len(models)):
     for i in np.arange(4):
         r = np.corrcoef(obs_pc[i,:], models_pc_sorted[j, i, :])[0, 1]
+        print(models[j], i, 'PC',stats.t.cdf(r * np.sqrt((NWEEKS - 2) /(1 - np.power(r, 2))),
+                                             NWEEKS - 2))
         significance_pc[j, i] = stats.t.ppf(1 - 0.05, NWEEKS-2) <= np.abs(r * np.sqrt((NWEEKS - 2) /(1 - np.power(r, 2))))
         r = np.corrcoef(obs_evec[i, :], models_evec_sorted[j, i, :])[0, 1]
+        print(models[j], i, 'EOF',stats.t.cdf(r * np.sqrt((NPOINTS - 2) /(1 - np.power(r, 2))),
+                                             NPOINTS - 2))
         significance_evec[j, i] = stats.t.ppf(1 - 0.05, NPOINTS - 2) <= np.abs(r * np.sqrt((NPOINTS - 2) / (1 - np.power(r, 2))))
 
 print(np.logical_and(significance_pc, significance_evec))

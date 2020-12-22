@@ -76,34 +76,34 @@ clevs = np.linspace(-40, 40, 21)
 minv = -40
 maxv = 40
 barra = plt.cm.bwr #colorbar
-for j in np.arange(4): #loop over modes
-    fig = plt.figure(figsize=(26, 6), dpi=300)  
-    plt.subplot(1, 6, 1)
-    mapproj = bm.Basemap(projection='cyl', llcrnrlon=270, llcrnrlat=-60, 
-                         urcrnrlon=270 + (NX - 1) *1.5, urcrnrlat=-60 + (NY - 1) * 1.5,
-                         resolution='i')
-    mapproj.drawcoastlines()
-    lonproj, latproj = mapproj(dx, dy)
-    CS1 = mapproj.contourf(lonproj, latproj, np.reshape(obs_evec[j, :], [NY, NX]), 
-                           clevs, cmap=barra, vmin=minv, vmax=maxv)
-    plt.title("Obs", fontsize=12)
-    for i in np.arange(5): #loop over models
-        plt.subplot(1, 6, i + 2)
-        mapproj = bm.Basemap(projection='cyl', llcrnrlon=270, llcrnrlat=-60, 
-                         urcrnrlon=270 + (NX - 1) *1.5, urcrnrlat=-60 + (NY - 1) * 1.5,
-                             resolution='i')
-        mapproj.drawcoastlines()
-        lonproj, latproj = mapproj(dx, dy)
-        CS1 = mapproj.contourf(lonproj, latproj, np.reshape(models_evec[i, j, :], [NY, NX]), 
-                               clevs, cmap=barra, vmin=minv, vmax=maxv)
-        plt.title(models[i].upper(), fontsize=12)
-        #titulo general
-        plt.suptitle('Empirical Orthogonal Function: '+ str(j + 1), fontsize=14, x=0.52, y=0.95)
-    cbar_ax = fig.add_axes([0.29, 0.05, 0.45, 0.05])
-    fig.colorbar(CS1, cax=cbar_ax, orientation='horizontal')
-    #cbar_ax.set_xticklabels([-0.9, -0.6, -0.3, 0, 0.3, 0.6, 0.9])#,size = 9)
-    plt.savefig(RUTA_OUT + 'unsorted_eofs_' + str(j + 1) + '.png', dpi=300,
-                bbox_inches='tight', orientation='landscape', papertype='A4') 
+#for j in np.arange(4): #loop over modes
+#    fig = plt.figure(figsize=(26, 6), dpi=300)  
+#    plt.subplot(1, 6, 1)
+#    mapproj = bm.Basemap(projection='cyl', llcrnrlon=270, llcrnrlat=-60, 
+#                         urcrnrlon=270 + (NX - 1) *1.5, urcrnrlat=-60 + (NY - 1) * 1.5,
+#                         resolution='i')
+#    mapproj.drawcoastlines()
+#    lonproj, latproj = mapproj(dx, dy)
+#    CS1 = mapproj.contourf(lonproj, latproj, np.reshape(obs_evec[j, :], [NY, NX]), 
+#                           clevs, cmap=barra, vmin=minv, vmax=maxv)
+#    plt.title("Obs", fontsize=12)
+#    for i in np.arange(5): #loop over models
+#        plt.subplot(1, 6, i + 2)
+#        mapproj = bm.Basemap(projection='cyl', llcrnrlon=270, llcrnrlat=-60, 
+#                         urcrnrlon=270 + (NX - 1) *1.5, urcrnrlat=-60 + (NY - 1) * 1.5,
+#                             resolution='i')
+#        mapproj.drawcoastlines()
+#        lonproj, latproj = mapproj(dx, dy)
+#        CS1 = mapproj.contourf(lonproj, latproj, np.reshape(models_evec[i, j, :], [NY, NX]), 
+#                               clevs, cmap=barra, vmin=minv, vmax=maxv)
+#        plt.title(models[i].upper(), fontsize=12)
+#        #titulo general
+#        plt.suptitle('Empirical Orthogonal Function: '+ str(j + 1), fontsize=14, x=0.52, y=0.95)
+#    cbar_ax = fig.add_axes([0.29, 0.05, 0.45, 0.05])
+#    fig.colorbar(CS1, cax=cbar_ax, orientation='horizontal')
+#    #cbar_ax.set_xticklabels([-0.9, -0.6, -0.3, 0, 0.3, 0.6, 0.9])#,size = 9)
+#    plt.savefig(RUTA_OUT + 'unsorted_eofs_' + str(j + 1) + '.png', dpi=300,
+#                bbox_inches='tight', orientation='landscape', papertype='A4') 
 x = np.arange(1, NWEEKS + 1)  
 fig1 = plt.figure(figsize = (10, 21), dpi = 300)  #fig size in inches
 for j in np.arange(4): #loop over Pcs
@@ -167,12 +167,14 @@ for i in np.arange(len(models)):
         models_evec_sorted[i,j,:] = np.sign(pcc_aux[j, index]) * evec_aux[index, :]
         models_var_sorted[i, j] = eval_aux[index]
         pss_sorted[i, j] = pss_aux[j,index]
+        print(models[i], tcc_aux[j, index], pcc_aux[j, index])
         pss_aux = np.delete(pss_aux, index, 1)
         tcc_aux = np.delete(tcc_aux, index, 1)
         pcc_aux = np.delete(pcc_aux, index, 1)
         pc_aux = np.delete(pc_aux, index, 0)
         evec_aux = np.delete(evec_aux, index, 0)
         eval_aux = np.delete(eval_aux, index)
+            
 
 np.savez('./outputs/pss_exp_var_w4.npz', models_var_sorted, obs_var, np.sqrt(pss_sorted))
 
@@ -243,13 +245,17 @@ significance_evec = np.empty([len(models), 4])
 for j in np.arange(len(models)):
     for i in np.arange(4):
         r = np.corrcoef(obs_pc[i,:], models_pc_sorted[j, i, :])[0, 1]
+        print(models[j], i, 'PC',stats.t.cdf(r * np.sqrt((NWEEKS - 2) /(1 - np.power(r, 2))),
+                                             NWEEKS - 2))
         significance_pc[j, i] = stats.t.ppf(1 - 0.05, NWEEKS-2) <= np.abs(r * np.sqrt((NWEEKS - 2) /(1 - np.power(r, 2))))
         r = np.corrcoef(obs_evec[i, :], models_evec_sorted[j, i, :])[0, 1]
+        print(models[j], i, 'EOF',stats.t.cdf(r * np.sqrt((NPOINTS - 2) /(1 - np.power(r, 2))),
+                                              NPOINTS - 2))
         significance_evec[j, i] = stats.t.ppf(1 - 0.05, NPOINTS - 2) <= np.abs(r * np.sqrt((NPOINTS - 2) / (1 - np.power(r, 2))))
 
 print(np.logical_and(significance_pc, significance_evec))
 ## Predictable modes according to the t-test
-predic_modes = [3, 0, 3, 3, 3]
+predic_modes = [3, 3, 3, 3, 3]
 #compute correlations between: full observed anomalies and
 R_forec_anomalies = np.empty([len(models),NY * NX])
 for i in np.arange(len(models)):
@@ -297,7 +303,7 @@ for i in np.arange(len(models)):
         R_forec_residual_modes[i, j] =np.corrcoef(residual_forec_modes[i, :, j], 
                                                   obs_weekly_precip[:, j])[0, 1]
 R_forec_residual_modes = np.reshape(R_forec_residual_modes, [len(models), NY, NX])
-np.savez('./outputs/skill_predic_w4.npz', R_forec_predic_modes, R_forec_residual_modes,
+np.savez('./outputs/skill_predic_w4_bis.npz', R_forec_predic_modes, R_forec_residual_modes,
          R_forec_anomalies,R_obs_predic_modes1, R_obs_predic_modes0, dx, dy)
 
 ## Plotting results
@@ -325,7 +331,7 @@ plt.suptitle('Potential predictability', fontsize=14, x=0.52, y=0.95)
 cbar_ax = fig.add_axes([0.29, 0.05, 0.45, 0.05])
 fig.colorbar(CS1, cax=cbar_ax, orientation='horizontal')
 cbar_ax.set_xticklabels([-0.9, -0.6, -0.3, 0, 0.3, 0.6, 0.9])#,size = 9)
-plt.savefig(RUTA_OUT + 'r_obs_predic_modes.png', dpi=300, bbox_inches='tight',
+plt.savefig(RUTA_OUT + 'r_obs_predic_modes_bis.png', dpi=300, bbox_inches='tight',
             orientation='landscape', papertype='A4') 
 ### Correlation btw Observation and Models
 fig = plt.figure(figsize=(22, 6), dpi=300)  #fig size in inches
@@ -348,7 +354,7 @@ fig.subplots_adjust(right=0.8)
 cbar_ax = fig.add_axes([0.29, 0.05, 0.45, 0.05])
 fig.colorbar(CS1, cax=cbar_ax, orientation='horizontal')
 cbar_ax.set_xticklabels([-0.9, -0.6, -0.3, 0, 0.3, 0.6, 0.9])#,size = 9)
-plt.savefig(RUTA_OUT + 'r_forec_anomalies.png', dpi=300, bbox_inches='tight',
+plt.savefig(RUTA_OUT + 'r_forec_anomalies_bis.png', dpi=300, bbox_inches='tight',
             orientation='landscape', papertype='A4') 
 ### Correlation btwn Observation and Forecasted predictable modes
 fig = plt.figure(figsize=(22, 6), dpi=300)  #fig size in inches
@@ -371,7 +377,7 @@ fig.subplots_adjust(right=0.8)
 cbar_ax = fig.add_axes([0.29, 0.05, 0.45, 0.05])
 fig.colorbar(CS1, cax=cbar_ax, orientation='horizontal')
 cbar_ax.set_xticklabels([-0.9, -0.6, -0.3, 0, 0.3, 0.6, 0.9])#,size = 9)
-plt.savefig(RUTA_OUT + 'r_forec_predic_modes.png', dpi=300, bbox_inches='tight',
+plt.savefig(RUTA_OUT + 'r_forec_predic_modes_bis.png', dpi=300, bbox_inches='tight',
             orientation='landscape', papertype='A4') 
 ### Correlation btwn Observation and Forecasted residual modes
 fig = plt.figure(figsize=(22, 6), dpi=300)  #fig size in inches
@@ -394,6 +400,6 @@ fig.subplots_adjust(right=0.8)
 cbar_ax = fig.add_axes([0.29, 0.05, 0.45, 0.05])
 fig.colorbar(CS1, cax=cbar_ax, orientation='horizontal')
 cbar_ax.set_xticklabels([-0.9, -0.6, -0.3, 0, 0.3, 0.6, 0.9])#,size = 9)
-plt.savefig(RUTA_OUT + 'r_forec_residual_modes.png', dpi=300, bbox_inches='tight',
+plt.savefig(RUTA_OUT + 'r_forec_residual_modes_bis.png', dpi=300, bbox_inches='tight',
             orientation='landscape', papertype='A4')
 

@@ -251,8 +251,13 @@ significance_evec = np.empty([len(models), 4])
 for j in np.arange(len(models)):
     for i in np.arange(4):
         r = np.corrcoef(obs_pc[i,:], models_pc_sorted[j, i, :])[0, 1]
+        print(models[j], i, 'PC',stats.t.cdf(r * np.sqrt((NWEEKS - 2) /(1 - np.power(r, 2))), NWEEKS - 2))
+
         significance_pc[j, i] = stats.t.ppf(1 - 0.05, NWEEKS-2) <= np.abs(r * np.sqrt((NWEEKS - 2) /(1 - np.power(r, 2))))
         r = np.corrcoef(obs_evec[i, :], models_evec_sorted[j, i, :])[0, 1]
+        print(models[j], i, 'PC',stats.t.cdf(r * np.sqrt((NPOINTS - 2) /(1 - np.power(r, 2))),
+                                             NPOINTS - 2))
+
         significance_evec[j, i] = stats.t.ppf(1 - 0.05, NPOINTS - 2) <= np.abs(r * np.sqrt((NPOINTS - 2) / (1 - np.power(r, 2))))
 
 print(np.logical_and(significance_pc, significance_evec))
